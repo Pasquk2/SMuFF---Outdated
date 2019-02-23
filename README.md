@@ -20,4 +20,5 @@ You'll also need a couple of additional libraries:
 
 All these libraries can be easily installed through the Arduino IDE library manager.
 
-more instructions will follow...
+For further information head over to the Wiki pages:
+https://github.com/technik-gegg/SMuFF/wiki

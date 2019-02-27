@@ -247,36 +247,46 @@ void loop() {
       displayingUserMessage = false;
     }
   }
+
   int button = digitalRead(ENCODER_BUTTON_PIN);
   if(button == LOW && isPwrSave) {
-    isPwrSave = false;
-    display.setPowerSave(0);
-    pwrSaveTime = millis();
+    setPwrSave(0);
   }
   else {
     int turn = encoder.read();
     if(turn % ENCODER_DELAY_MENU == 0) {
       if(!showMenu && turn != lastTurn) {
-        displayingUserMessage = false;
-        showMenu = true;
-        if(turn < lastTurn) {
-          showMainMenu();
+        if(isPwrSave) {
+          setPwrSave(0);
         }
         else {
-          showToolsMenu();
+          displayingUserMessage = false;
+          showMenu = true;
+          if(turn < lastTurn) {
+            showMainMenu();
+          }
+          else {
+            showToolsMenu();
+          }
+          turn = encoder.read();
+          showMenu = false;
         }
-        turn = encoder.read();
-        showMenu = false;
       }
       lastTurn = turn;
     }
   }
   delay(100);
-  if(millis()-pwrSaveTime >= POWER_SAVE_TIMEOUT*1000) {
-    //__debug("Power save mode");
-    display.setPowerSave(1);
-    isPwrSave = true;
+  if((millis() - pwrSaveTime)/1000 >= smuffConfig.powerSaveTimeout && !isPwrSave) {
+    //__debug("Power save mode after %d seconds (%d)", (millis() - pwrSaveTime)/1000, smuffConfig.powerSaveTimeout);
+    setPwrSave(1);
   }
+}
+
+void setPwrSave(int state) {
+  display.setPowerSave(state);
+  isPwrSave = state == 1;
+  if(!isPwrSave)
+    pwrSaveTime = millis();
 }
 
 bool checkUserMessage() {

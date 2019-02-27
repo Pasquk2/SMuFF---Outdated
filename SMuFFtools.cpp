@@ -450,19 +450,18 @@ bool unloadFilament() {
 }
 
 bool selectTool(int ndx, bool showMessage = true) {
-  char msg[256];
   if(feederJamed) {
     beep(4);
-    sprintf_P(msg, P_FeederJamed);
-    strcat_P(msg, P_Aborting);
-    drawUserMessage(msg);
+    sprintf_P(_msg1, P_FeederJamed);
+    strcat_P(_msg1, P_Aborting);
+    drawUserMessage(_msg1);
     return;
   }
   signalSelectorBusy();
   if(toolSelected == ndx) {
     userBeep();
-    sprintf_P(msg, P_ToolAlreadySet);
-    drawUserMessage(msg);
+    sprintf_P(_msg1, P_ToolAlreadySet);
+    drawUserMessage(_msg1);
     if(smuffConfig.externalControl_Z) {
       resetRevolver();
       signalSelectorReady();
@@ -473,7 +472,7 @@ bool selectTool(int ndx, bool showMessage = true) {
     steppers[SELECTOR].setEnabled(true);
   
   if (showMessage) {
-    while(!smuffConfig.externalControl_Z && feederEndstop()) {
+    while(feederEndstop()) {
       if (!showFeederLoadedMessage())
         return;
     }
